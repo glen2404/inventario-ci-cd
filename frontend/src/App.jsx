@@ -6,7 +6,7 @@ const API_URL = 'http://localhost:3000/api/productos';
 function App() {
   // Lista de productos ya cargados desde el backend
   const [productos, setProductos] = useState([]);
-  // Campos del formulario
+  // Campos del formulario...
   const [sku, setSku] = useState('');
   const [nombre, setNombre] = useState('');
   // Cargar productos al inicio
