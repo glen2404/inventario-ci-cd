@@ -2,13 +2,18 @@ import { useEffect, useState } from "react";
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+
 const API_URL = 'http://localhost:3000/api/productos';
+
 function App() {
   // Lista de productos ya cargados desde el backend
   const [productos, setProductos] = useState([]);
+
   // Campos del formulario...
   const [sku, setSku] = useState('');
   const [nombre, setNombre] = useState('');
+  const [stock, setStock] = useState(0); // NUEVO
+
   // Cargar productos al inicio
   useEffect(() => {
     fetch(API_URL)
@@ -16,31 +21,48 @@ function App() {
       .then((json) => setProductos(json.data ?? []))
       .catch((err) => console.error('Error cargando productos', err));
   }, []);
+
   // Manejar envío del formulario
   const handleSubmit = async (e) => {
     e.preventDefault(); // evitar recarga de la página
-    const nuevo = { sku, nombre };
+
+    // Validación simple (opcional)
+    if (!sku.trim() || !nombre.trim()) {
+      alert("SKU y nombre son obligatorios");
+      return;
+    }
+
+    const nuevo = { 
+      sku, 
+      nombre, 
+      stock: Number(stock) // NUEVO
+    };
+
     const resp = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(nuevo)
     });
+
     if (resp.ok) {
       const json = await resp.json();
+
       // Añadir producto a la lista en pantalla
       setProductos((prev) => [...prev, json.data]);
+
       // Limpiar campos
       setSku('');
       setNombre('');
+      setStock(0); // NUEVO
     } else {
       alert('Error al crear producto');
     }
   };
-  /*function App() {
-  const [count, setCount] = useState(0)*/
+
   return (
     <div>
       <h1>Inventario Web (Demo)</h1>
+
       <form onSubmit={handleSubmit}>
         <div>
           <label>SKU:</label>
@@ -50,6 +72,7 @@ function App() {
             placeholder="A-001"
           />
         </div>
+
         <div>
           <label>Nombre:</label>
           <input
@@ -58,9 +81,23 @@ function App() {
             placeholder="Cable HDMI"
           />
         </div>
+
+        {/* NUEVO CAMPO STOCK */}
+        <div>
+          <label>Stock:</label>
+          <input
+            type="number"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+            placeholder="0"
+          />
+        </div>
+
         <button type="submit">Crear producto</button>
       </form>
+
       <hr />
+
       <h2>Productos actuales</h2>
       <ul>
         {productos.map((p) => (
@@ -72,4 +109,5 @@ function App() {
     </div>
   );
 }
+
 export default App;
