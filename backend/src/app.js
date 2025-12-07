@@ -21,4 +21,13 @@ app.post("/api/productos", (req, res) => {
     });
   }
 });
+
+app.get("/api/version", (req, res) => {
+  res.json({
+    version: "1.0.0",
+    author: "glen2404",
+    message: "Backend funcionando correctamente"
+  });
+});
+
 module.exports = app;
