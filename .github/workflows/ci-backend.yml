@@ -24,6 +24,10 @@ jobs:
           cd backend
           npm install
 
+      - name: Revisar vulnerabilidades con npm audit
+        run: |
+          cd backend
+          npm audit || true   # ← evita que falle el pipeline
 
       - name: Dar permisos a Jest
         run: |
